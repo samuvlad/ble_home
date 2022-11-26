@@ -1,0 +1,16 @@
+[package]
+name = "ble"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+bluer-tools = "0.14.1"
+bluer = "0.15.1"
+
+futures = { version = "0.3.*" }
+tokio = {version = "1.22.0", features = ["full"] }
+uuid = "1"
+dotenv = "0.15.0"
+async-recursion = "1.0.0"

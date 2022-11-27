@@ -1,4 +1,5 @@
 use core::time;
+use std::collections::HashMap;
 use std::str::FromStr;
 use std::{str, thread};
 
@@ -48,6 +49,7 @@ async fn read_char(device: Device) {
                                             str::from_utf8(&udata).unwrap_or("Data is not char");
                                         if current_data != udata {
                                             println!("Datos: {}", data);
+                                            register_data(data.to_string()).await;
                                         }
 
                                         current_data = udata.clone();
@@ -79,4 +81,34 @@ async fn main() {
 #[async_recursion]
 async fn reconect(device: Device) {
     read_char(device).await;
+}
+
+async fn register_data(data: String) {
+    let mut map = HashMap::new();
+    let (humidity, temperature) = get_data(data);
+    map.insert("humidity", humidity);
+    map.insert("temperature", temperature);
+    call_api(map).await;
+}
+
+fn get_data(data: String) -> (f32, f32) {
+    let split = data.split(",");
+    let vec = split.collect::<Vec<&str>>();
+    let t: f32 = vec.get(0).unwrap().parse().unwrap_or(0.0);
+    let h: f32 = vec.get(1).unwrap().parse().unwrap_or(0.0);
+    return (h, t);
+}
+
+async fn call_api(body: HashMap<&str, f32>) {
+    let client = reqwest::Client::new();
+    let res = client
+        .post("http://localhost:8080/weather/")
+        .json(&body)
+        .send()
+        .await;
+
+    match res {
+        Ok(_) => println!("Register data"),
+        Err(_) => println!("Erro to register data"),
+    }
 }

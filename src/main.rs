@@ -86,9 +86,11 @@ async fn reconect(device: Device) {
 async fn register_data(data: String) {
     let mut map = HashMap::new();
     let (humidity, temperature) = get_data(data);
-    map.insert("humidity", humidity);
-    map.insert("temperature", temperature);
-    call_api(map).await;
+    if humidity != 0.0 || temperature != 0.0 {
+        map.insert("humidity", humidity);
+        map.insert("temperature", temperature);
+        call_api(map).await;
+    }
 }
 
 fn get_data(data: String) -> (f32, f32) {

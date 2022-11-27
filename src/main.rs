@@ -22,7 +22,7 @@ async fn read_char(device: Device) {
                 retries -= 1;
             }
             Err(_) => {
-                println!("Error to connect");
+                println!("Error to connect. Check Bluetooth");
                 retries = 6;
             }
         }
